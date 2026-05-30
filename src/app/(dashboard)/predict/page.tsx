@@ -53,9 +53,8 @@ const predictSchema = z.object({
   ph: z.coerce.number().min(1).max(14),
 });
 
-type PredictForm = z.infer<
-  typeof predictSchema
->;
+type PredictFormInput = z.input<typeof predictSchema>;
+type PredictForm = z.infer<typeof predictSchema>;
 
 export default function PredictPage() {
 
@@ -92,7 +91,7 @@ export default function PredictPage() {
     register,
     handleSubmit,
     setValue,
-  } = useForm<PredictForm>({
+  } = useForm<PredictFormInput, unknown, PredictForm>({
     resolver: zodResolver(
       predictSchema
     ),
