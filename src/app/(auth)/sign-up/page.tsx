@@ -116,8 +116,6 @@ export default function SignUpPage() {
   email: data.email,
 
   company: data.company,
-
-  password: data.password,
 };
 
     console.log(
