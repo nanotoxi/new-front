@@ -159,35 +159,14 @@ export default function SignInPage() {
       "Signed in successfully"
     );
 
-    /* SMALL DELAY */
-    await new Promise(
-      (resolve) =>
-        setTimeout(
-          resolve,
-          300
-        )
-    );
-
     /* ADMIN */
-    if (
-      me?.role === "admin"
-    ) {
-
-      router.push(
-        "/admin/overview"
-      );
-
-      router.refresh();
-
+    if (me?.role === "admin") {
+      window.location.href = "/admin/overview";
       return;
     }
 
     /* NORMAL USER */
-    router.push(
-      "/dashboard"
-    );
-
-    router.refresh();
+    window.location.href = "/dashboard";
 
   } catch (error: any) {
 
