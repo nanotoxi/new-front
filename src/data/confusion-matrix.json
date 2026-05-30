@@ -1,0 +1,16 @@
+[
+  {
+    "source": "In-vitro",
+    "tp": 82,
+    "tn": 76,
+    "fp": 8,
+    "fn": 6
+  },
+  {
+    "source": "In-vivo",
+    "tp": 71,
+    "tn": 69,
+    "fp": 10,
+    "fn": 12
+  }
+]

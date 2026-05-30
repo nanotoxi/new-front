@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2026-05-12 14:20",
+    "user": "kanika",
+    "inputs": "Gold NP / 20nm",
+    "output": "Toxic",
+    "verdict": "Toxic",
+    "confidence": 92,
+    "latency": 122
+  },
+  {
+    "id": 2,
+    "timestamp": "2026-05-12 14:30",
+    "user": "vedant",
+    "inputs": "Silver NP / 10nm",
+    "output": "Safe",
+    "verdict": "Safe",
+    "confidence": 81,
+    "latency": 98
+  }
+]

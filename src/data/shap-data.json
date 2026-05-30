@@ -1,0 +1,22 @@
+[
+  {
+    "feature": "Dose",
+    "importance": 92
+  },
+  {
+    "feature": "Particle Size",
+    "importance": 80
+  },
+  {
+    "feature": "Exposure Time",
+    "importance": 71
+  },
+  {
+    "feature": "Surface Charge",
+    "importance": 64
+  },
+  {
+    "feature": "Cell Line",
+    "importance": 58
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "NanoTox V2",
+    "rows": 12450,
+    "toxic": 58,
+    "safe": 42,
+    "lastUpdated": "2026-05-10",
+    "owner": "Kanika",
+    "notebook": "https://colab.research.google.com/"
+  },
+  {
+    "id": 2,
+    "name": "CellLine Benchmark",
+    "rows": 8420,
+    "toxic": 49,
+    "safe": 51,
+    "lastUpdated": "2026-05-08",
+    "owner": "Vedant",
+    "notebook": "https://colab.research.google.com/"
+  },
+  {
+    "id": 3,
+    "name": "Combined V2 Training",
+    "rows": 22180,
+    "toxic": 61,
+    "safe": 39,
+    "lastUpdated": "2026-05-12",
+    "owner": "Titan AI",
+    "notebook": "https://colab.research.google.com/"
+  }
+]
