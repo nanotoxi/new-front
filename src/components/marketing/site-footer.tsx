@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import {
   Globe,
@@ -145,9 +146,15 @@ export function SiteFooter() {
               className="flex items-center gap-4"
             >
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-cyan-400 text-2xl font-black text-white shadow-[0_0_40px_rgba(124,58,237,0.4)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 shadow-[0_0_40px_rgba(34,211,238,0.25)]">
 
-                N
+                <Image
+                  src="/nanotoxi-logo.png"
+                  alt="NanoToxi"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
 
               </div>
 

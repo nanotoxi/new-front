@@ -13,6 +13,8 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 
+import Image from "next/image";
+
 import {
   Activity,
   ShieldCheck,
@@ -918,19 +920,31 @@ export default function PredictPage() {
                 {/* HEADER */}
                 <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
 
-                  <div>
+                  <div className="flex items-center gap-4">
 
-                    <p className="mb-3 text-sm font-semibold uppercase tracking-[0.35em] text-cyan-400">
+                    <Image
+                      src="/nanotoxi-logo.png"
+                      alt="NanoToxi"
+                      width={48}
+                      height={48}
+                      className="opacity-90"
+                    />
 
-                      AI Inference Complete
+                    <div>
 
-                    </p>
+                      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.35em] text-cyan-400">
 
-                    <h2 className="text-4xl font-black text-white">
+                        AI Inference Complete
 
-                      Prediction Result
+                      </p>
 
-                    </h2>
+                      <h2 className="text-4xl font-black text-white">
+
+                        Prediction Result
+
+                      </h2>
+
+                    </div>
 
                   </div>
 
@@ -1005,7 +1019,7 @@ export default function PredictPage() {
 
                     <h3 className="mt-3 text-4xl font-black text-white">
 
-                      RF v2
+                      RF v16
 
                     </h3>
 
@@ -1092,6 +1106,26 @@ export default function PredictPage() {
 
           </motion.div>
         )}
+
+      {/* DISCLAIMER */}
+      <div className="flex items-start gap-3 rounded-2xl border border-cyan-500/10 bg-[#071120]/50 px-5 py-4 backdrop-blur-sm">
+
+        <Image
+          src="/nanotoxi-logo.png"
+          alt="NanoToxi"
+          width={20}
+          height={20}
+          className="mt-0.5 shrink-0 opacity-60"
+        />
+
+        <p className="text-xs leading-relaxed text-white/40">
+
+          <span className="font-semibold text-white/55">Disclaimer —</span>{" "}
+          Predictions are generated using a model trained on approximately 17,000+ literature-curated nanoparticle records and should be interpreted as supportive guidance rather than experimental validation.
+
+        </p>
+
+      </div>
 
     </div>
   );

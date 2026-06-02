@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import { usePathname } from "next/navigation";
 
@@ -93,8 +94,16 @@ export function DashboardSidebar() {
 
           <Link
   href="/dashboard"
-  className="transition-opacity hover:opacity-80"
+  className="flex items-center gap-3 transition-opacity hover:opacity-80"
 >
+
+  <Image
+    src="/nanotoxi-logo.png"
+    alt="NanoToxi"
+    width={36}
+    height={36}
+    className="shrink-0 object-contain"
+  />
 
   <div>
 

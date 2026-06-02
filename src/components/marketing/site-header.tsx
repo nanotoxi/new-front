@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import {
   useEffect,
@@ -93,9 +94,15 @@ export function SiteHeader() {
           className="group flex items-center gap-3 sm:gap-4"
         >
 
-          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-cyan-500/10 text-2xl sm:text-3xl font-black text-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_45px_rgba(34,211,238,0.45)]">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-cyan-500/10 shadow-[0_0_35px_rgba(34,211,238,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_45px_rgba(34,211,238,0.45)]">
 
-            N
+            <Image
+              src="/nanotoxi-logo.png"
+              alt="NanoToxi"
+              width={36}
+              height={36}
+              className="h-7 w-7 sm:h-9 sm:w-9 object-contain"
+            />
 
           </div>
 
