@@ -596,7 +596,7 @@ export default function ComparePage() {
                         borderRadius: "16px",
                         color: "#fff",
                       }}
-                      formatter={(value: number) => [`${value}%`, "Confidence"]}
+                      formatter={(value) => [`${value}%`, "Confidence"]}
                     />
 
                     <Bar dataKey="toxicity" radius={[8, 8, 0, 0]}>
