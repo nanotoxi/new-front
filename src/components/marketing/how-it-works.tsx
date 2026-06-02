@@ -298,9 +298,7 @@ export default function HowItWorks() {
               orbitron
               max-w-none
               text-left
-              text-[36px]
-              sm:text-[60px]
-              lg:text-[90px]
+              text-[60px]
               font-black
               leading-[0.95]
               tracking-[-0.03em]

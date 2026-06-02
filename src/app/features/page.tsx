@@ -190,7 +190,7 @@ export default function FeaturesPage() {
             duration: 0.8,
           }}
 
-          className="max-w-6xl text-6xl font-black uppercase leading-[0.9] tracking-tight md:text-[120px]"
+          className="max-w-6xl text-6xl font-black uppercase leading-[0.9] tracking-tight md:text-[70px]"
           style={{
             fontFamily:
               "Orbitron, sans-serif",

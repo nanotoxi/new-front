@@ -228,7 +228,7 @@ export default function ContactPage() {
           </div>
 
           <h1
-            className="text-6xl font-black uppercase leading-[0.9] md:text-[6.5rem]"
+            className="text-6xl font-black uppercase leading-[0.9] md:text-[4rem]"
             style={{
               fontFamily:
                 "Orbitron, sans-serif",

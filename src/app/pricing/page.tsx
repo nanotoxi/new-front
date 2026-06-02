@@ -216,7 +216,7 @@ export default function PricingPage() {
             sm:text-6xl
             md:text-6xl
             lg:text-8xl
-            xl:text-[110px]
+            xl:text-[70px]
           "
           style={{
             fontFamily:

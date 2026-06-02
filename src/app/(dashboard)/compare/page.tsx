@@ -6,21 +6,30 @@ import { toast } from "sonner";
 
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
+  Cell,
 } from "recharts";
 
 import { motion } from "framer-motion";
 
-import { comparePrediction } from "@/lib/compare-api";
+import { api } from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Card,
@@ -38,9 +47,43 @@ import {
 import {
   Activity,
   ShieldCheck,
-  AlertTriangle,
   BrainCircuit,
+  GitCompare,
 } from "lucide-react";
+
+type NPForm = {
+  label: string;
+  nanoparticle: string;
+  npType: string;
+  size: string;
+  dosage: string;
+  exposure: string;
+  surfaceCharge: string;
+  cellType: string;
+  ph: string;
+  morphology: string;
+};
+
+type ResultItem = {
+  label: string;
+  npType: string;
+  toxicity: number;
+  verdict: string;
+  risk: string;
+};
+
+const emptyForm = (label: string): NPForm => ({
+  label,
+  nanoparticle: "",
+  npType: "",
+  size: "",
+  dosage: "",
+  exposure: "",
+  surfaceCharge: "",
+  cellType: "HeLa",
+  ph: "7.4",
+  morphology: "Spherical",
+});
 
 export default function ComparePage() {
 
@@ -48,164 +91,78 @@ export default function ComparePage() {
     useState(false);
 
   const [results, setResults] =
-    useState<any[]>([]);
+    useState<ResultItem[]>([]);
 
-  const [formData, setFormData] =
-    useState({
+  const [npA, setNpA] =
+    useState<NPForm>(emptyForm("NP A"));
 
-      nanoparticle: "",
+  const [npB, setNpB] =
+    useState<NPForm>(emptyForm("NP B"));
 
-      npType: "",
-
-      size: "",
-
-      shape: "",
-
-      dosage: "",
-
-      exposure: "",
-
-      surfaceCharge: "",
-
-      coating: "",
-
-      viability: "",
-
-      ph: "",
-    });
+  function buildPayload(form: NPForm) {
+    return {
+      nanoparticle_name: form.nanoparticle || form.npType || "Unknown",
+      np_type: form.npType,
+      primary_size_nm: Number(form.size),
+      hydrodynamic_size_nm: Number(form.size),
+      zeta_potential_mv: Number(form.surfaceCharge),
+      morphology: form.morphology,
+      cell_type: form.cellType,
+      dose_max_ugml: Number(form.dosage),
+      dose_min_ugml: Math.max(Number(form.dosage) / 10, 1),
+      exposure_time_h: Number(form.exposure),
+      ph: Number(form.ph),
+      temperature_c: 37,
+      is_coated: false,
+      is_therapeutic: false,
+      include_shap: false,
+      include_rag: false,
+    };
+  }
 
   async function runComparison() {
+
+    if (!npA.npType || !npA.size || !npA.dosage || !npA.exposure ||
+        !npB.npType || !npB.size || !npB.dosage || !npB.exposure) {
+      toast.error("Fill in NP Type, Size, Dosage and Exposure for both NPs");
+      return;
+    }
 
     try {
 
       setLoading(true);
-
       setResults([]);
 
-      toast.loading(
-        "Running AI comparison...",
+      toast.loading("Running RF v16 comparison...", { id: "compare-loading" });
+
+      const [resA, resB] = await Promise.all([
+        api.predict(buildPayload(npA)),
+        api.predict(buildPayload(npB)),
+      ]);
+
+      setResults([
         {
-          id: "compare-loading",
-        }
-      );
-
-      const payload = {
-
-        nanoparticle_name:
-          formData.nanoparticle,
-
-        np_type:
-          formData.npType,
-
-        primary_size_nm:
-          Number(formData.size),
-
-        hydrodynamic_size_nm:
-          Number(formData.size),
-
-        zeta_potential_mv:
-          Number(
-            formData.surfaceCharge
-          ),
-
-        morphology:
-          formData.shape,
-
-        cell_type:
-          "A549",
-
-        dose_max_ugml:
-          Number(formData.dosage),
-
-        dose_min_ugml:
-          Math.max(
-            Number(formData.dosage) / 10,
-            1
-          ),
-
-        exposure_time_h:
-          Number(formData.exposure),
-
-        ph:
-          Number(formData.ph),
-
-        temperature_c: 37,
-
-        is_coated:
-          !!formData.coating,
-
-        is_therapeutic:
-          false,
-
-        include_shap:
-          true,
-
-        include_rag:
-          false,
-      };
-
-      const response =
-        await comparePrediction(
-          payload
-        );
-
-      console.log(
-        "COMPARE RESPONSE",
-        response
-      );
-
-      const formatted = [
-
-        {
-          cell:
-            "RF V2 FINAL",
-
-          toxicity:
-            Math.round(
-              response.rf_v2_final
-                ?.confidence * 100
-            ),
-
-          verdict:
-            response.rf_v2_final
-              ?.prediction,
+          label: npA.label,
+          npType: npA.npType,
+          toxicity: Math.round(resA.confidence * 100),
+          verdict: resA.toxicity_label,
+          risk: resA.risk_level || (resA.confidence > 0.8 ? "High" : resA.confidence > 0.5 ? "Moderate" : "Low"),
         },
-
         {
-          cell:
-            "CLIENTB",
-
-          toxicity:
-            Math.round(
-              response.clientb
-                ?.confidence * 100
-            ),
-
-          verdict:
-            response.clientb
-              ?.prediction,
+          label: npB.label,
+          npType: npB.npType,
+          toxicity: Math.round(resB.confidence * 100),
+          verdict: resB.toxicity_label,
+          risk: resB.risk_level || (resB.confidence > 0.8 ? "High" : resB.confidence > 0.5 ? "Moderate" : "Low"),
         },
-      ];
+      ]);
 
-      setResults(formatted);
+      toast.success("Comparison complete", { id: "compare-loading" });
 
-      toast.success(
-        "Comparison completed successfully",
-        {
-          id: "compare-loading",
-        }
-      );
+    } catch (error: any) {
 
-    } catch (error) {
-
-      console.log(error);
-
-      toast.error(
-        "Comparison failed",
-        {
-          id: "compare-loading",
-        }
-      );
+      console.error("Compare error:", error?.response?.data || error);
+      toast.error(error?.response?.data?.detail || "Comparison failed", { id: "compare-loading" });
 
     } finally {
 
@@ -213,20 +170,14 @@ export default function ComparePage() {
     }
   }
 
-  const highest =
-    results[0];
+  const agreement =
+    results.length === 2 &&
+    results[0].verdict === results[1].verdict;
 
-  const average =
-    results.length
-      ? Math.round(
-          results.reduce(
-            (acc, item) =>
-              acc +
-              item.toxicity,
-            0
-          ) / results.length
-        )
-      : 0;
+  const chartData = results.map((r) => ({
+    name: `${r.label} (${r.npType})`,
+    toxicity: r.toxicity,
+  }));
 
   return (
 
@@ -239,195 +190,165 @@ export default function ComparePage() {
 
           <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee]" />
 
-          Multi Model Analysis
+          RF v16 — Side-by-Side Analysis
 
         </div>
 
         <h1 className="bg-gradient-to-r from-white via-white to-cyan-300 bg-clip-text text-4xl font-black text-transparent md:text-5xl">
 
-          Compare Toxicity
+          Compare Nanoparticles
 
         </h1>
 
         <p className="max-w-3xl text-base text-white/45 md:text-xl">
 
-          Compare nanoparticle toxicity predictions
-          across multiple AI models simultaneously.
+          Run two nanoparticle formulations through RF v16 simultaneously
+          and compare their toxicity predictions side-by-side.
 
         </p>
 
       </div>
 
-      {/* FORM */}
-      <Card className="border border-cyan-500/10 bg-[#081325]/70 backdrop-blur-2xl">
+      {/* DUAL FORM */}
+      <div className="grid gap-6 xl:grid-cols-2">
 
-        <CardContent className="grid gap-5 p-4 md:grid-cols-2 md:p-6 xl:p-8">
+        {([
+          { form: npA, setForm: setNpA, accent: "cyan" },
+          { form: npB, setForm: setNpB, accent: "violet" },
+        ] as const).map(({ form, setForm, accent }) => (
 
-          <Input
-            placeholder="Nanoparticle"
-            value={formData.nanoparticle}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                nanoparticle:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+          <Card
+            key={form.label}
+            className={`border ${
+              accent === "cyan"
+                ? "border-cyan-500/20"
+                : "border-violet-500/20"
+            } bg-[#081325]/70 backdrop-blur-2xl`}
+          >
 
-          <Input
-            placeholder="NP Type"
-            value={formData.npType}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                npType:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+            <CardContent className="space-y-4 p-6">
 
-          <Input
-            placeholder="Size (nm)"
-            type="number"
-            value={formData.size}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                size:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+              <div className="flex items-center gap-3">
 
-          <Input
-            placeholder="Shape"
-            value={formData.shape}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                shape:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+                  accent === "cyan" ? "bg-cyan-500/10" : "bg-violet-500/10"
+                }`}>
 
-          <Input
-            placeholder="Dosage"
-            type="number"
-            value={formData.dosage}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                dosage:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                  <BrainCircuit className={`h-5 w-5 ${
+                    accent === "cyan" ? "text-cyan-400" : "text-violet-400"
+                  }`} />
 
-          <Input
-            placeholder="Exposure Time"
-            type="number"
-            value={formData.exposure}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                exposure:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                </div>
 
-          <Input
-            placeholder="Surface Charge"
-            type="number"
-            value={formData.surfaceCharge}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                surfaceCharge:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                <h3 className="text-xl font-black text-white">
 
-          <Input
-            placeholder="Coating"
-            value={formData.coating}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                coating:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                  {form.label}
 
-          <Input
-            placeholder="Cell Viability"
-            type="number"
-            value={formData.viability}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                viability:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+                </h3>
 
-          <Input
-            placeholder="pH"
-            type="number"
-            value={formData.ph}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                ph:
-                  e.target.value,
-              })
-            }
-            className="h-14 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
-          />
+              </div>
 
-          <div className="md:col-span-2">
+              <div className="grid gap-3 sm:grid-cols-2">
 
-            <Button
-              onClick={
-                runComparison
-              }
-              className="h-14 w-full rounded-2xl bg-cyan-400 text-lg font-bold text-black shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-all duration-300 hover:bg-cyan-300"
-              disabled={loading}
-            >
+                <Input
+                  placeholder="Nanoparticle Name"
+                  value={form.nanoparticle}
+                  onChange={(e) => setForm({ ...form, nanoparticle: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
 
-              {loading
-                ? "Running AI Comparison..."
-                : "Compare"}
+                <Input
+                  placeholder="NP Type (e.g. ZnO, Au)"
+                  value={form.npType}
+                  onChange={(e) => setForm({ ...form, npType: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
 
-            </Button>
+                <Input
+                  placeholder="Size (nm)"
+                  type="number"
+                  value={form.size}
+                  onChange={(e) => setForm({ ...form, size: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
 
-          </div>
+                <Input
+                  placeholder="Dosage (µg/mL)"
+                  type="number"
+                  value={form.dosage}
+                  onChange={(e) => setForm({ ...form, dosage: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
 
-        </CardContent>
+                <Input
+                  placeholder="Exposure Time (h)"
+                  type="number"
+                  value={form.exposure}
+                  onChange={(e) => setForm({ ...form, exposure: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
 
-      </Card>
+                <Input
+                  placeholder="Surface Charge (mV)"
+                  type="number"
+                  value={form.surfaceCharge}
+                  onChange={(e) => setForm({ ...form, surfaceCharge: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
+
+                <Select
+                  value={form.cellType}
+                  onValueChange={(v) => setForm({ ...form, cellType: v })}
+                >
+
+                  <SelectTrigger className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white">
+                    <SelectValue placeholder="Cell Line" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {["HeLa","A549","HepG2","MCF-7","BEAS-2B","HT-29","L929","Caco-2","MDA-MB-231","RAW264.7","Other"].map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+
+                </Select>
+
+                <Input
+                  placeholder="pH"
+                  type="number"
+                  value={form.ph}
+                  onChange={(e) => setForm({ ...form, ph: e.target.value })}
+                  className="h-11 border-cyan-500/10 bg-[#020817]/80 text-white placeholder:text-white/30"
+                />
+
+              </div>
+
+            </CardContent>
+
+          </Card>
+        ))}
+
+      </div>
+
+      {/* COMPARE BUTTON */}
+      <Button
+        onClick={runComparison}
+        disabled={loading}
+        className="h-14 w-full rounded-2xl bg-cyan-400 text-lg font-bold text-black shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-all duration-300 hover:bg-cyan-300"
+      >
+
+        <GitCompare className="mr-3 h-5 w-5" />
+
+        {loading ? "Running RF v16 Comparison..." : "Compare Both NPs via RF v16"}
+
+      </Button>
 
       {/* EMPTY */}
-      {!loading &&
-        results.length === 0 && (
+      {!loading && results.length === 0 && (
 
         <EmptyState
           title="No comparison results yet"
-          description="Run a model comparison to visualize AI toxicity predictions."
+          description="Fill in both NP forms and click Compare to run RF v16 side-by-side analysis."
         />
 
       )}
@@ -436,124 +357,118 @@ export default function ComparePage() {
       {loading && (
 
         <div className="space-y-6">
-
           <Skeleton className="h-24 w-full rounded-3xl bg-cyan-500/10" />
-
           <Skeleton className="h-[400px] w-full rounded-3xl bg-cyan-500/10" />
-
         </div>
+
       )}
 
       {/* RESULTS */}
-      {!loading &&
-        results.length > 0 && (
+      {!loading && results.length === 2 && (
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
 
-          {/* MODEL CARDS */}
+          {/* VERDICT CARDS */}
           <div className="grid gap-6 xl:grid-cols-2">
 
-            {results.map(
-              (
-                item,
-                index
-              ) => (
+            {results.map((item, index) => (
 
-                <Card
-                  key={index}
-                  className="border border-cyan-500/10 bg-[#081325]/70 backdrop-blur-xl"
-                >
+              <Card
+                key={index}
+                className={`border ${
+                  item.verdict === "Toxic"
+                    ? "border-red-500/20 bg-red-500/5"
+                    : "border-green-500/20 bg-green-500/5"
+                } backdrop-blur-xl`}
+              >
 
-                  <CardContent className="space-y-6 p-6">
+                <CardContent className="space-y-6 p-6">
 
-                    <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between">
 
-                      <div>
+                    <div>
 
-                        <p className="text-white/45">
+                      <p className="text-sm text-white/45">RF v16 — {item.label}</p>
 
-                          AI Model
+                      <h2 className="mt-1 text-2xl font-black text-white">
 
-                        </p>
+                        {item.npType}
 
-                        <h2 className="mt-2 text-3xl font-black text-white">
-
-                          {item.cell}
-
-                        </h2>
-
-                      </div>
-
-                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/10">
-
-                        <BrainCircuit className="h-8 w-8 text-cyan-400" />
-
-                      </div>
+                      </h2>
 
                     </div>
 
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    <div className={`inline-flex items-center rounded-full px-5 py-2 text-base font-black ${
+                      item.verdict === "Toxic"
+                        ? "bg-red-500/20 text-red-400"
+                        : "bg-green-500/20 text-green-400"
+                    }`}>
 
-                      <div className="rounded-2xl border border-cyan-500/10 bg-[#020817]/70 p-5">
-
-                        <p className="text-sm text-white/45">
-
-                          Toxicity
-
-                        </p>
-
-                        <h3 className="mt-3 text-4xl font-black text-cyan-300">
-
-                          {item.toxicity}%
-
-                        </h3>
-
-                      </div>
-
-                      <div className="rounded-2xl border border-cyan-500/10 bg-[#020817]/70 p-5">
-
-                        <p className="text-sm text-white/45">
-
-                          Prediction
-
-                        </p>
-
-                        <h3
-                          className={`mt-3 text-3xl font-black ${
-                            item.verdict ===
-                            "Toxic"
-                              ? "text-red-400"
-                              : "text-green-400"
-                          }`}
-                        >
-
-                          {item.verdict}
-
-                        </h3>
-
-                      </div>
+                      {item.verdict}
 
                     </div>
 
-                  </CardContent>
+                  </div>
 
-                </Card>
-              )
-            )}
+                  <div className="grid gap-4 sm:grid-cols-2">
+
+                    <div className="rounded-2xl border border-cyan-500/10 bg-[#020817]/70 p-5">
+
+                      <p className="text-sm text-white/45">Confidence</p>
+
+                      <h3 className="mt-3 text-4xl font-black text-cyan-300">
+
+                        {item.toxicity}%
+
+                      </h3>
+
+                    </div>
+
+                    <div className="rounded-2xl border border-cyan-500/10 bg-[#020817]/70 p-5">
+
+                      <p className="text-sm text-white/45">Risk Level</p>
+
+                      <h3 className={`mt-3 text-3xl font-black ${
+                        item.risk === "High" ? "text-red-400"
+                          : item.risk === "Moderate" ? "text-yellow-400"
+                          : "text-green-400"
+                      }`}>
+
+                        {item.risk}
+
+                      </h3>
+
+                    </div>
+
+                  </div>
+
+                  {/* Confidence bar */}
+                  <div className="h-3 overflow-hidden rounded-full bg-white/10">
+
+                    <div
+                      className={`h-full rounded-full ${
+                        item.verdict === "Toxic"
+                          ? "bg-gradient-to-r from-red-500 to-orange-400"
+                          : "bg-gradient-to-r from-green-500 to-cyan-400"
+                      }`}
+                      style={{ width: `${item.toxicity}%` }}
+                    />
+
+                  </div>
+
+                </CardContent>
+
+              </Card>
+
+            ))}
 
           </div>
 
-          {/* STATS */}
+          {/* SUMMARY STATS */}
           <div className="grid gap-6 md:grid-cols-3">
 
             <Card className="border border-cyan-500/10 bg-[#081325]/70 backdrop-blur-xl">
@@ -562,34 +477,17 @@ export default function ComparePage() {
 
                 <div>
 
-                  <p className="text-white/45">
+                  <p className="text-white/45">Model</p>
 
-                    Highest Confidence
+                  <h2 className="mt-3 text-3xl font-black text-cyan-400">RF v16</h2>
 
-                  </p>
-
-                  <h2 className="mt-3 text-5xl font-black text-red-400">
-
-                    {
-                      highest?.toxicity
-                    }
-                    %
-
-                  </h2>
-
-                  <p className="mt-2 text-white/45">
-
-                    {
-                      highest?.verdict
-                    }
-
-                  </p>
+                  <p className="mt-1 text-sm text-white/30">ROC-AUC 0.9321</p>
 
                 </div>
 
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/10">
 
-                  <AlertTriangle className="h-8 w-8 text-red-400" />
+                  <BrainCircuit className="h-8 w-8 text-cyan-400" />
 
                 </div>
 
@@ -603,23 +501,29 @@ export default function ComparePage() {
 
                 <div>
 
-                  <p className="text-white/45">
+                  <p className="text-white/45">Agreement</p>
 
-                    Average Confidence
+                  <h2 className={`mt-3 text-3xl font-black ${agreement ? "text-green-400" : "text-yellow-400"}`}>
 
-                  </p>
-
-                  <h2 className="mt-3 text-5xl font-black text-yellow-400">
-
-                    {average}%
+                    {agreement ? "Matched" : "Differs"}
 
                   </h2>
 
+                  <p className="mt-1 text-sm text-white/30">
+
+                    {agreement
+                      ? `Both predict ${results[0].verdict}`
+                      : `${results[0].verdict} vs ${results[1].verdict}`}
+
+                  </p>
+
                 </div>
 
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-500/10">
+                <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
+                  agreement ? "bg-green-500/10" : "bg-yellow-500/10"
+                }`}>
 
-                  <Activity className="h-8 w-8 text-yellow-400" />
+                  <Activity className={`h-8 w-8 ${agreement ? "text-green-400" : "text-yellow-400"}`} />
 
                 </div>
 
@@ -633,17 +537,15 @@ export default function ComparePage() {
 
                 <div>
 
-                  <p className="text-white/45">
+                  <p className="text-white/45">Confidence Gap</p>
 
-                    Models Compared
+                  <h2 className="mt-3 text-3xl font-black text-white">
 
-                  </p>
-
-                  <h2 className="mt-3 text-5xl font-black text-cyan-400">
-
-                    2
+                    {Math.abs(results[0].toxicity - results[1].toxicity)}%
 
                   </h2>
+
+                  <p className="mt-1 text-sm text-white/30">between NP A and NP B</p>
 
                 </div>
 
@@ -664,112 +566,51 @@ export default function ComparePage() {
 
             <CardContent className="p-4 md:p-6 xl:p-8">
 
-              <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="mb-8">
 
-                <div>
+                <h2 className="text-3xl font-black text-white">Confidence Comparison</h2>
 
-                  <h2 className="text-3xl font-black text-white">
-
-                    Model Comparison
-
-                  </h2>
-
-                  <p className="mt-2 text-white/45">
-
-                    Confidence comparison across AI models
-
-                  </p>
-
-                </div>
-
-                <div className="rounded-full border border-cyan-500/10 bg-cyan-500/10 px-5 py-2 text-cyan-300">
-
-                  Live Analytics
-
-                </div>
+                <p className="mt-2 text-white/45">RF v16 toxicity confidence score for each nanoparticle</p>
 
               </div>
 
-              <div className="h-[420px] w-full">
+              <div className="h-[300px] w-full">
 
-                <ResponsiveContainer
-                  width="100%"
-                  height="100%"
-                >
+                <ResponsiveContainer width="100%" height="100%">
 
-                  <AreaChart
-                    data={results}
-                    margin={{
-                      top: 10,
-                      right: 10,
-                      left: -20,
-                      bottom: 0,
-                    }}
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                   >
 
-                    <defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
 
-                      <linearGradient
-                        id="toxicityGradient"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
+                    <XAxis dataKey="name" stroke="#64748b" tickLine={false} axisLine={false} />
 
-                        <stop
-                          offset="0%"
-                          stopColor="#22d3ee"
-                          stopOpacity={0.5}
-                        />
-
-                        <stop
-                          offset="100%"
-                          stopColor="#22d3ee"
-                          stopOpacity={0}
-                        />
-
-                      </linearGradient>
-
-                    </defs>
-
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.04)"
-                    />
-
-                    <XAxis
-                      dataKey="cell"
-                      stroke="#64748b"
-                      tickLine={false}
-                      axisLine={false}
-                    />
-
-                    <YAxis
-                      stroke="#64748b"
-                      tickLine={false}
-                      axisLine={false}
-                    />
+                    <YAxis stroke="#64748b" tickLine={false} axisLine={false} domain={[0, 100]} />
 
                     <Tooltip
                       contentStyle={{
                         background: "#081325",
-                        border:
-                          "1px solid rgba(34,211,238,0.08)",
+                        border: "1px solid rgba(34,211,238,0.08)",
                         borderRadius: "16px",
                         color: "#fff",
                       }}
+                      formatter={(value: number) => [`${value}%`, "Confidence"]}
                     />
 
-                    <Area
-                      type="monotone"
-                      dataKey="toxicity"
-                      stroke="#22d3ee"
-                      strokeWidth={3}
-                      fill="url(#toxicityGradient)"
-                    />
+                    <Bar dataKey="toxicity" radius={[8, 8, 0, 0]}>
 
-                  </AreaChart>
+                      {chartData.map((entry, index) => (
+                        <Cell
+                          key={index}
+                          fill={results[index]?.verdict === "Toxic" ? "#f87171" : "#22d3ee"}
+                        />
+                      ))}
+
+                    </Bar>
+
+                  </BarChart>
 
                 </ResponsiveContainer>
 
@@ -779,26 +620,21 @@ export default function ComparePage() {
 
           </Card>
 
-          {/* AI SUMMARY */}
+          {/* INTERPRETATION */}
           <Card className="border border-cyan-500/10 bg-[#081325]/70 backdrop-blur-xl">
 
             <CardContent className="p-6 md:p-8">
 
-              <h2 className="text-3xl font-black text-white">
-
-                AI Interpretation
-
-              </h2>
+              <h2 className="text-3xl font-black text-white">RF v16 Interpretation</h2>
 
               <p className="mt-6 leading-8 text-white/45">
 
-                The model comparison demonstrates
-                prediction similarity and confidence
-                consistency between multiple AI
-                inference systems. This enables
-                researchers to validate toxicity
-                analysis reliability before
-                biological experimentation.
+                Both nanoparticles were assessed using the same RF v16 model (ROC-AUC 0.9321,
+                trained on 17,934 literature-curated records, threshold=0.44).
+                {agreement
+                  ? ` Both formulations returned a <strong>${results[0].verdict}</strong> prediction — consistent outcome across different physicochemical profiles.`
+                  : ` The two formulations returned different predictions (${results[0].label}: ${results[0].verdict}, ${results[1].label}: ${results[1].verdict}) — indicating distinct toxicity profiles under the evaluated conditions.`
+                } Results are supportive guidance and should be complemented with experimental validation.
 
               </p>
 
@@ -807,6 +643,7 @@ export default function ComparePage() {
           </Card>
 
         </motion.div>
+
       )}
 
     </div>

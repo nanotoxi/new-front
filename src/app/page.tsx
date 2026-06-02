@@ -78,9 +78,8 @@ export default function HomePage() {
             <h1
               className={`
                 ${orbitron.className}
-                text-[44px]
-                sm:text-[72px]
-                md:text-[110px]
+                text-[36px]
+                md:text-[70px]
                 leading-[0.9]
                 tracking-[-0.05em]
                 font-extrabold
@@ -198,7 +197,7 @@ export default function HomePage() {
             </div>
 
             <h2
-              className={`${orbitron.className} text-6xl font-black leading-[0.95] tracking-[-0.04em] md:text-8xl`}
+              className={`${orbitron.className} text-6xl font-black leading-[0.95] tracking-[-0.04em] md:text-6xl`}
             >
 
               MODEL
