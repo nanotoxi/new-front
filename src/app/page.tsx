@@ -108,6 +108,20 @@ export default function HomePage() {
 
             </h1>
 
+            {/* Acquisition badge */}
+            <div className="mt-6 flex justify-center">
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/15 via-sky-500/10 to-blue-500/15 px-5 py-2 backdrop-blur-xl shadow-[0_0_24px_rgba(34,211,238,0.18)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.28em] text-cyan-300">
+                  Acquired By{" "}
+                  <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                    INDO BIOACTIVE LABS
+                  </span>
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+              </div>
+            </div>
+
             <p className="mt-8 max-w-3xl text-center text-[20px] leading-[1.8] text-white/55">
 
               Accelerate nanomedicine research with AI-driven toxicity
