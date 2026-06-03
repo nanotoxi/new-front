@@ -327,6 +327,97 @@ export default function AboutPage() {
 
       </section>
 
+      {/* TEAM */}
+      <section className="relative z-10 mx-auto mt-4 max-w-6xl px-6 pb-24">
+
+        <div className="mb-14 text-center">
+
+          <div className="mb-5 inline-flex rounded-full border border-cyan-500/20 bg-cyan-500/10 px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+            Leadership
+          </div>
+
+          <h2
+            className="text-4xl font-black uppercase md:text-5xl"
+            style={{ fontFamily: "Orbitron, sans-serif" }}
+          >
+            THE{" "}
+            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              TEAM
+            </span>
+          </h2>
+
+        </div>
+
+        <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
+
+          {[
+            {
+              name: "Ronith Lahoti",
+              role: "CEO & Founder",
+              href: "https://www.linkedin.com/in/ronithlahoti/",
+              initials: "RL",
+              accent: "from-cyan-400 to-blue-500",
+              border: "border-cyan-500/20",
+              bg: "bg-cyan-500/10",
+              glow: "hover:shadow-[0_0_60px_rgba(34,211,238,0.15)]",
+            },
+            {
+              name: "Yash Wasnik",
+              role: "CTO",
+              href: "https://www.linkedin.com/in/yashwasnik/",
+              initials: "YW",
+              accent: "from-violet-400 to-cyan-500",
+              border: "border-violet-500/20",
+              bg: "bg-violet-500/10",
+              glow: "hover:shadow-[0_0_60px_rgba(139,92,246,0.15)]",
+            },
+          ].map((member, index) => (
+
+            <motion.a
+              key={member.name}
+              href={member.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className={`group flex flex-col items-center rounded-[2rem] border ${member.border} bg-white/[0.03] p-10 text-center backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 ${member.glow}`}
+            >
+
+              {/* AVATAR */}
+              <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${member.bg} shadow-lg`}>
+                <span className={`text-2xl font-black bg-gradient-to-br ${member.accent} bg-clip-text text-transparent`}>
+                  {member.initials}
+                </span>
+              </div>
+
+              <h3
+                className="text-2xl font-black"
+                style={{ fontFamily: "Orbitron, sans-serif" }}
+              >
+                {member.name}
+              </h3>
+
+              <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.2em] bg-gradient-to-r ${member.accent} bg-clip-text text-transparent`}>
+                {member.role}
+              </p>
+
+              {/* LINKEDIN BADGE */}
+              <div className={`mt-6 inline-flex items-center gap-2 rounded-full border ${member.border} px-4 py-1.5 text-xs font-semibold text-white/50 transition-all duration-300 group-hover:text-white/80`}>
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+              </div>
+
+            </motion.a>
+          ))}
+
+        </div>
+
+      </section>
+
       {/* CTA */}
       <section className="relative z-10 mx-auto mb-24 max-w-4xl px-6">
 
