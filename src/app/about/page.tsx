@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 
 import { motion } from "framer-motion";
 
+import Image from "next/image";
+
 import {
   Brain,
   ShieldCheck,
@@ -355,20 +357,20 @@ export default function AboutPage() {
               name: "Ronith Lahoti",
               role: "CEO & Founder",
               href: "https://www.linkedin.com/in/ronithlahoti/",
-              initials: "RL",
+              photo: "/ronith.jpeg",
               accent: "from-cyan-400 to-blue-500",
               border: "border-cyan-500/20",
-              bg: "bg-cyan-500/10",
+              ring: "ring-cyan-400/30",
               glow: "hover:shadow-[0_0_60px_rgba(34,211,238,0.15)]",
             },
             {
               name: "Yash Wasnik",
               role: "CTO",
               href: "https://www.linkedin.com/in/yashwasnik/",
-              initials: "YW",
+              photo: "/yash.png",
               accent: "from-violet-400 to-cyan-500",
               border: "border-violet-500/20",
-              bg: "bg-violet-500/10",
+              ring: "ring-violet-400/30",
               glow: "hover:shadow-[0_0_60px_rgba(139,92,246,0.15)]",
             },
           ].map((member, index) => (
@@ -386,10 +388,14 @@ export default function AboutPage() {
             >
 
               {/* AVATAR */}
-              <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${member.bg} shadow-lg`}>
-                <span className={`text-2xl font-black bg-gradient-to-br ${member.accent} bg-clip-text text-transparent`}>
-                  {member.initials}
-                </span>
+              <div className={`mb-6 h-24 w-24 overflow-hidden rounded-full ring-2 ${member.ring} shadow-lg`}>
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  width={96}
+                  height={96}
+                  className="h-full w-full object-cover object-top"
+                />
               </div>
 
               <h3
