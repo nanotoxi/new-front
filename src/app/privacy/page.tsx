@@ -43,7 +43,7 @@ const sections = [
     icon: UserCheck,
     title: "Your Rights",
     content: [
-      "You have the right to access, correct, or delete your personal data at any time by contacting us at privacy@nanotoxi.ai.",
+      "You have the right to access, correct, or delete your personal data at any time by contacting us at contact@nanotoxi.com.",
       "You may request a portable copy of your data in a machine-readable format.",
       "You may opt out of non-essential communications and analytics tracking through your account settings.",
       "You may request that we restrict processing of your personal data in certain circumstances.",
@@ -97,7 +97,7 @@ export default function PrivacyPage() {
             Legal
           </div>
           <h1
-            className="text-5xl font-black uppercase leading-[0.9] md:text-[4rem]"
+            className="text-5xl font-black uppercase leading-[0.9] md:text-[3rem]"
             style={{ fontFamily: "Orbitron, sans-serif" }}
           >
             Privacy
@@ -178,8 +178,8 @@ export default function PrivacyPage() {
           <h3 className="text-xl font-bold">Questions about this policy?</h3>
           <p className="mt-3 text-white/55">
             Contact our data protection team at{" "}
-            <a href="mailto:privacy@nanotoxi.ai" className="text-cyan-400 hover:underline">
-              privacy@nanotoxi.ai
+            <a href="mailto:contact@nanotoxi.com" className="text-cyan-400 hover:underline">
+              contact@nanotoxi.com
             </a>
           </p>
         </motion.div>

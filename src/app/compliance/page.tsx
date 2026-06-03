@@ -66,7 +66,7 @@ const sections = [
       "We maintain records sufficient to respond to lawful requests from regulatory and law enforcement authorities, balanced against our obligations to protect user data.",
       "We do not provide prediction services for nanoparticles that are subject to export control restrictions without appropriate licensing.",
       "Users are solely responsible for obtaining any necessary institutional, ethics, or regulatory approvals for the research activities they use NanoToxi AI to support.",
-      "For compliance inquiries, regulatory engagements, or institutional procurement questions, contact compliance@nanotoxi.ai.",
+      "For compliance inquiries, regulatory engagements, or institutional procurement questions, contact contact@nanotoxi.com.",
     ],
   },
 ];
@@ -92,7 +92,7 @@ export default function CompliancePage() {
             Governance
           </div>
           <h1
-            className="text-5xl font-black uppercase leading-[0.9] md:text-[4rem]"
+            className="text-5xl font-black uppercase leading-[0.9] md:text-[3rem]"
             style={{ fontFamily: "Orbitron, sans-serif" }}
           >
             Compliance
@@ -177,8 +177,8 @@ export default function CompliancePage() {
           <h3 className="text-xl font-bold">Compliance inquiries</h3>
           <p className="mt-3 text-white/55">
             Contact our compliance team at{" "}
-            <a href="mailto:compliance@nanotoxi.ai" className="text-violet-400 hover:underline">
-              compliance@nanotoxi.ai
+            <a href="mailto:contact@nanotoxi.com" className="text-violet-400 hover:underline">
+              contact@nanotoxi.com
             </a>
           </p>
         </motion.div>

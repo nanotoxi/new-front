@@ -56,7 +56,7 @@ const sections = [
       "In the event of a confirmed data breach affecting personal data, affected users will be notified within 72 hours in accordance with applicable data protection regulations.",
       "Security incidents are triaged by severity. Critical incidents (active breach, data exfiltration) trigger immediate escalation and a dedicated response team.",
       "Post-incident reports are produced for all high-severity events and are retained for a minimum of two years for audit purposes.",
-      "To report a security vulnerability, please contact security@nanotoxi.ai. We operate a responsible disclosure policy and will acknowledge reports within 48 hours.",
+      "To report a security vulnerability, please contact contact@nanotoxi.com. We operate a responsible disclosure policy and will acknowledge reports within 48 hours.",
     ],
   },
   {
@@ -92,7 +92,7 @@ export default function SecurityPage() {
             Trust &amp; Safety
           </div>
           <h1
-            className="text-5xl font-black uppercase leading-[0.9] md:text-[4rem]"
+            className="text-5xl font-black uppercase leading-[0.9] md:text-[3rem]"
             style={{ fontFamily: "Orbitron, sans-serif" }}
           >
             Security
@@ -176,8 +176,8 @@ export default function SecurityPage() {
           <h3 className="text-xl font-bold">Found a vulnerability?</h3>
           <p className="mt-3 text-white/55">
             Report it responsibly at{" "}
-            <a href="mailto:security@nanotoxi.ai" className="text-emerald-400 hover:underline">
-              security@nanotoxi.ai
+            <a href="mailto:contact@nanotoxi.com" className="text-emerald-400 hover:underline">
+              contact@nanotoxi.com
             </a>
             . We acknowledge all reports within 48 hours.
           </p>

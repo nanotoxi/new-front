@@ -2,6 +2,7 @@
 
 import { SiteHeader } from "@/components/marketing/site-header";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { FlaskConical, BookOpen, Microscope } from "lucide-react";
 
 const researchers = [
@@ -12,7 +13,7 @@ const researchers = [
     contribution:
       "Contributed domain expertise in nanoparticle physicochemistry and toxicological profiling, supporting literature curation and dataset quality validation.",
     href: "https://www.linkedin.com/in/dr-pravin-walke-fmasc-341b0410/",
-    initials: "PW",
+    photo: "/pravin.jpeg",
     accent: "from-cyan-400 to-blue-500",
     border: "border-cyan-500/20",
     ring: "ring-cyan-400/25",
@@ -28,7 +29,7 @@ const researchers = [
     contribution:
       "Provided expertise in nanotoxicology research, contributing to the curation and validation of biological endpoints and cell-line exposure data across the training corpus.",
     href: "https://www.linkedin.com/in/himadri-medhi-ph-d-24a3b430/",
-    initials: "HM",
+    photo: "/researcher-logo.png",
     accent: "from-violet-400 to-blue-500",
     border: "border-violet-500/20",
     ring: "ring-violet-400/25",
@@ -44,7 +45,7 @@ const researchers = [
     contribution:
       "Assisted in the systematic extraction and annotation of nanoparticle toxicity records from peer-reviewed literature, directly contributing to the 17,000+ record training dataset.",
     href: "https://www.linkedin.com/in/rutuja-gumathannavar-655399183/",
-    initials: "RG",
+    photo: "/researcher-logo.png",
     accent: "from-sky-400 to-cyan-500",
     border: "border-sky-500/20",
     ring: "ring-sky-400/25",
@@ -125,10 +126,14 @@ export default function PartnersPage() {
 
                 {/* TOP ROW */}
                 <div className="mb-6 flex items-center gap-4">
-                  <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full ring-2 ${r.ring} bg-white/[0.04]`}>
-                    <span className={`text-xl font-black bg-gradient-to-br ${r.accent} bg-clip-text text-transparent`}>
-                      {r.initials}
-                    </span>
+                  <div className={`h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ${r.ring} bg-white/[0.04]`}>
+                    <Image
+                      src={r.photo}
+                      alt={r.name}
+                      width={64}
+                      height={64}
+                      className="h-full w-full object-cover object-center"
+                    />
                   </div>
                   <div>
                     <h3 className="font-black leading-tight">

@@ -93,7 +93,7 @@ export default function TermsPage() {
             Legal
           </div>
           <h1
-            className="text-5xl font-black uppercase leading-[0.9] md:text-[4rem]"
+            className="text-5xl font-black uppercase leading-[0.9] md:text-[3rem]"
             style={{ fontFamily: "Orbitron, sans-serif" }}
           >
             Terms of
@@ -169,8 +169,8 @@ export default function TermsPage() {
           <h3 className="text-xl font-bold">Questions about these terms?</h3>
           <p className="mt-3 text-white/55">
             Contact our legal team at{" "}
-            <a href="mailto:legal@nanotoxi.ai" className="text-blue-400 hover:underline">
-              legal@nanotoxi.ai
+            <a href="mailto:contact@nanotoxi.com" className="text-blue-400 hover:underline">
+              contact@nanotoxi.com
             </a>
           </p>
         </motion.div>
