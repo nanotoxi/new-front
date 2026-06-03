@@ -52,7 +52,7 @@ const footerLinks = {
 
     {
       label: "Partners",
-      href: "#",
+      href: "/partners",
     },
   ],
 
