@@ -187,27 +187,30 @@ export function SiteFooter() {
             {/* Socials */}
             <div className="mt-8 flex items-center gap-4">
 
-              {[Globe,
-                Phone,
-                Mail,
-              ].map(
-                (
-                  Icon,
-                  index
-                ) => (
+              {[Globe, Phone].map((Icon, index) => (
+                <div
+                  key={index}
+                  className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:bg-primary/10"
+                >
+                  <Icon className="h-5 w-5 text-muted transition-colors duration-300 hover:text-white" />
+                </div>
+              ))}
 
-                  <div
-                    key={index}
-                    className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:bg-primary/10"
-                  >
-
-                    <Icon className="h-5 w-5 text-muted transition-colors duration-300 hover:text-white" />
-
-                  </div>
-                )
-              )}
+              <a
+                href="mailto:contact@nanotoxi.com"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:bg-primary/10"
+              >
+                <Mail className="h-5 w-5 text-muted transition-colors duration-300 hover:text-white" />
+              </a>
 
             </div>
+
+            <a
+              href="mailto:contact@nanotoxi.com"
+              className="mt-4 inline-block text-sm text-white/40 transition-colors hover:text-cyan-400"
+            >
+              contact@nanotoxi.com
+            </a>
 
           </div>
 
