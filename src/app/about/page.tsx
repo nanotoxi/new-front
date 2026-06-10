@@ -350,7 +350,7 @@ export default function AboutPage() {
 
         </div>
 
-        <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
           {[
             {
@@ -365,13 +365,23 @@ export default function AboutPage() {
             },
             {
               name: "Yash Wasnik",
-              role: "CTO",
+              role: "Founding Engineer",
               href: "https://www.linkedin.com/in/yashwasnik/",
               photo: "/yash.png",
               accent: "from-violet-400 to-cyan-500",
               border: "border-violet-500/20",
               ring: "ring-violet-400/30",
               glow: "hover:shadow-[0_0_60px_rgba(139,92,246,0.15)]",
+            },
+            {
+              name: "Dr. Swapnil Gaikwad",
+              role: "Key Opinion Leader",
+              href: "https://www.linkedin.com/in/dr-swapnil-c-gaikwad-87623a72",
+              photo: "/swapnil.png",
+              accent: "from-emerald-400 to-cyan-500",
+              border: "border-emerald-500/20",
+              ring: "ring-emerald-400/30",
+              glow: "hover:shadow-[0_0_60px_rgba(16,185,129,0.15)]",
             },
           ].map((member, index) => (
 
